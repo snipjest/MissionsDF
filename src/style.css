@@ -347,6 +347,9 @@ h1 {
 }
 .stage-main,
 .stage-stars {
+  display: flex;
+  align-items: center;
+  gap: 7px;
   font: 500 16px/1.25 var(--heading);
 }
 .stage-main {
@@ -356,9 +359,6 @@ h1 {
   color: #e2ebd9;
 }
 .stage-stars {
-  display: flex;
-  align-items: center;
-  gap: 7px;
   color: #e3ce83;
 }
 .stage-main strong,

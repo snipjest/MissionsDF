@@ -39,16 +39,14 @@ const entries = computed(() =>
           ></span
         >
         <span class="stage-info">
-          <span class="stage-kicker">{{
-            index < 3 ? `Этап ${index + 1}` : index === 3 ? 'Финальный этап' : 'Особые задания'
-          }}</span>
           <span class="stage-title">{{ stage.title.replace(/^[^:]+: /, '') }}</span>
           <span v-if="progress.mainTotal" class="stage-advance">
-            <span class="stage-advance-label">{{
-              stage.starsToAdvance !== null ? 'Для перехода дальше' : 'Для завершения этапа'
-            }}</span>
-            <span class="stage-main"
-              >Сюжет: <strong>{{ progress.mainCompleted }} / {{ progress.mainTotal }}</strong></span
+            <span
+              class="stage-main"
+              :aria-label="`Сюжетные миссии: ${progress.mainCompleted} из ${progress.mainTotal}`"
+              title="Сюжетные миссии"
+              ><UiIcon name="target" :size="16" />
+              <strong>{{ progress.mainCompleted }} / {{ progress.mainTotal }}</strong></span
             >
             <span
               v-if="stage.starsToAdvance !== null"
