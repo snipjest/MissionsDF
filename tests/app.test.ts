@@ -53,10 +53,10 @@ describe('mission navigation', () => {
     expect(wrapper.findAll('.section-nav button')).toHaveLength(1)
     expect(wrapper.get('.section-nav').attributes('aria-label')).toBe('Сезоны')
     expect(wrapper.get('.section-nav button[aria-current="page"]').text()).toBe(
-      'Сезон 12: Проблеск',
+      'Сезон 12: Аврора',
     )
     await wrapper.get('button[aria-label="Отметить задание выполненным"]').trigger('click')
-    await wrapper.get('.section-nav button[aria-label="Сезон 12: Проблеск"]').trigger('click')
+    await wrapper.get('.section-nav button[aria-label="Сезон 12: Аврора"]').trigger('click')
     expect(wrapper.get('.mission-details h2').text()).toBe('Возвращение в строй')
     expect(wrapper.findAll('.stage-stars')).toHaveLength(3)
     await wrapper.get('button[aria-label="Открыть этап: Контракты"]').trigger('click')

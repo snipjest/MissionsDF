@@ -149,7 +149,7 @@ function toggleCompleted() {
         <div>
           <p class="eyebrow"><span class="live-dot"></span>Операции / {{ season.title }}</p>
           <h1>
-            {{ activeStageId === 'destinyContract' ? 'Контракты' : 'План действий'
+            {{ activeStageId === 'destinyContract' ? 'Контракты' : 'Сезонные квесты'
             }}<span class="heading-slashes" aria-hidden="true">///</span>
           </h1>
         </div>
