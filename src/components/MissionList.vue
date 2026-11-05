@@ -88,6 +88,10 @@ defineEmits<{ toggle: [id: string]; select: [id: string] }>()
                 class="task-transfer-label"
                 ><UiIcon name="box" :size="13" />Передача предметов</span
               ><span
+                v-if="task.taskObjective.some(({ objective }) => /^Изготовьте\s/i.test(objective))"
+                class="task-craft-label"
+                ><UiIcon name="box" :size="13" />Крафт</span
+              ><span
                 v-if="task.taskReward.some(({ reward }) => reward.includes('Подсумок 3×3 на 1 день'))"
                 class="task-pouch-label"
                 ><UiIcon name="box" :size="13" />Подсумок 3×3 · 1 день</span

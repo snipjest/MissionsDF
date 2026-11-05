@@ -576,6 +576,7 @@ h1 {
   margin-top: 3px;
 }
 .task-pouch-label,
+.task-craft-label,
 .task-transfer-label {
   display: flex;
   align-items: center;
