@@ -80,13 +80,22 @@ watch(
 
 function selectSeason(id: string) {
   activeSeasonId.value = id
-  selectStage(stages.value[0]!.id)
+  const firstIncompleteStage = stages.value.find((item) =>
+    item.groups.some((group) => group.tasks.some((task) => !completed.value.has(task.id))),
+  )
+  selectStage((firstIncompleteStage ?? stages.value[0]!).id)
 }
 
 function selectStage(id: string) {
   activeStageId.value = id
-  expandedGroupId.value = stage.value.groups[0]!.id
-  selectedTaskId.value = stage.value.groups[0]!.tasks[0]!.id
+  const group =
+    stage.value.groups.find((item) =>
+      item.tasks.some((task) => !completed.value.has(task.id)),
+    ) ?? stage.value.groups[0]!
+  expandedGroupId.value = group.id
+  selectedTaskId.value = (
+    group.tasks.find((task) => !completed.value.has(task.id)) ?? group.tasks[0]!
+  ).id
   mobileDetail.value = false
 }
 
@@ -96,7 +105,10 @@ function toggleGroup(id: string) {
     return
   }
   expandedGroupId.value = id
-  selectedTaskId.value = stage.value.groups.find((group) => group.id === id)!.tasks[0]!.id
+  const group = stage.value.groups.find((group) => group.id === id)!
+  selectedTaskId.value = (
+    group.tasks.find((task) => !completed.value.has(task.id)) ?? group.tasks[0]!
+  ).id
 }
 
 async function selectTask(id: string) {
@@ -121,6 +133,8 @@ function toggleCompleted() {
   completed.value = next
   storageError.value = saveProgress(next, activeSeasonId.value)
 }
+
+selectSeason(activeSeasonId.value)
 </script>
 
 <template>

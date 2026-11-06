@@ -18,6 +18,50 @@ describe('mission navigation', () => {
     expect(wrapper.get('.stage-nav button[aria-current="step"]').text()).toContain('1 / 27')
   })
 
+  it('opens the first incomplete mission after reloading and reopening a stage or group', async () => {
+    wrapper = mount(App)
+    await wrapper.get('button[aria-label="Отметить задание выполненным"]').trigger('click')
+    wrapper.unmount()
+    wrapper = mount(App)
+    expect(wrapper.get('.mission-details h2').text()).toBe('Первые успехи')
+
+    await wrapper.get('button[aria-label="Открыть группу: Трудно прощаться"]').trigger('click')
+    await wrapper.get('.group-toggle').trigger('click')
+    expect(wrapper.get('.mission-details h2').text()).toBe('Первые успехи')
+
+    await wrapper.get('button[aria-label="Открыть этап: Контракты"]').trigger('click')
+    await wrapper.get('.stage-button').trigger('click')
+    expect(wrapper.get('.mission-details h2').text()).toBe('Первые успехи')
+  })
+
+  it('skips completed groups and stages, but still allows opening them', async () => {
+    wrapper = mount(App)
+    const tasks = wrapper.findAll('.mission-button')
+    for (const task of tasks.slice(0, 7)) {
+      await task.trigger('click')
+      await wrapper.get('button[aria-label="Отметить задание выполненным"]').trigger('click')
+    }
+    await wrapper.get('.stage-button').trigger('click')
+    expect(wrapper.get('.mission-details h2').text()).toBe('Тонкая настройка — 1')
+    expect(wrapper.get('.group-toggle[aria-expanded="true"]').text()).toContain('Операция по распределению ресурсов')
+
+    await wrapper.get('.group-toggle').trigger('click')
+    expect(wrapper.get('.mission-details h2').text()).toBe('Возвращение в строй')
+
+    for (const task of tasks.slice(7)) {
+      await task.trigger('click')
+      await wrapper.get('button[aria-label="Отметить задание выполненным"]').trigger('click')
+    }
+    wrapper.unmount()
+    wrapper = mount(App)
+    expect(wrapper.get('.mission-details h2').text()).toBe('В поисках врача')
+
+    await wrapper.get('.stage-button').trigger('click')
+    expect(wrapper.get('.mission-details h2').text()).toBe('Возвращение в строй')
+    await wrapper.get('.section-nav button').trigger('click')
+    expect(wrapper.get('.mission-details h2').text()).toBe('В поисках врача')
+  })
+
   it('selects the first group and mission when changing stages', async () => {
     wrapper = mount(App)
     await wrapper
@@ -39,6 +83,8 @@ describe('mission navigation', () => {
     await wrapper.get('button[aria-label="Отметить задание выполненным"]').trigger('click')
     wrapper.unmount()
     wrapper = mount(App)
+    expect(wrapper.get('.mission-button[aria-current="true"]').classes()).not.toContain('is-complete')
+    await wrapper.findAll('.mission-button')[0]!.trigger('click')
     await wrapper.get('button[aria-label="Отменить выполнение задания"]').trigger('click')
     expect(wrapper.get('.stage-nav button[aria-current="step"]').text()).toContain('0 / 27')
   })
@@ -60,9 +106,8 @@ describe('mission navigation', () => {
     expect(wrapper.get('.mission-details h2').text()).toBe('Возвращение в строй')
     expect(wrapper.findAll('.stage-stars')).toHaveLength(3)
     await wrapper.get('button[aria-label="Открыть этап: Контракты"]').trigger('click')
-    expect(
-      wrapper.get('button[aria-label="Отменить выполнение задания"]').attributes('aria-pressed'),
-    ).toBe('true')
+    expect(wrapper.get('.mission-button[aria-current="true"]').classes()).not.toContain('is-complete')
+    expect(wrapper.findAll('.mission-button')[0]!.classes()).toContain('is-complete')
   })
   it.each(['Открыть этап: Второй этап: Пламя на ветру', 'Открыть группу: Трудно прощаться'])(
     'starts new mission details at the top: %s',
